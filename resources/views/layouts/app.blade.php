@@ -14,6 +14,7 @@
     <!-- Add Font Awesome CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
      <script src="https://cdn.tailwindcss.com"></script>
+     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -47,6 +48,8 @@
             </div>
         </footer>
     </div>
+
+    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 
 </html>
