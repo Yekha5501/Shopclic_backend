@@ -30,4 +30,9 @@ class Transaction extends Model
             ->withPivot('quantity', 'subtotal')
             ->withTimestamps();
     }
+
+     public function transactionItems()
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
 }

@@ -21,11 +21,13 @@
                         {{ __('Products') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.index')">
-                        {{ __('Transactions') }}
+                  
+                    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')">
+                        {{ __('Reports') }}
                     </x-nav-link>
 
-             
+
+
                 </div>
             </div>
 
@@ -54,7 +56,7 @@
                             @csrf
 
                             <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
+                                onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
@@ -87,11 +89,12 @@
                 {{ __('Products') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.index')">
-                {{ __('Transactions') }}
+          
+
+            <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')">
+                {{ __('Reports') }}
             </x-responsive-nav-link>
 
-           
         </div>
 
         <!-- Responsive Import Options -->
@@ -111,7 +114,7 @@
                     @csrf
 
                     <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
+                        onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>

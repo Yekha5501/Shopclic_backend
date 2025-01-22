@@ -16,6 +16,8 @@
      <script src="https://cdn.tailwindcss.com"></script>
      <link href="{{ asset('css/app.css') }}" rel="stylesheet">
      <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.0/dist/cdn.min.js" defer></script>
+     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
