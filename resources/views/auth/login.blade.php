@@ -1,4 +1,6 @@
 <x-guest-layout>
+
+     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4"> 
     
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -45,4 +47,6 @@
             </x-primary-button>
         </div>
     </form>
+
+    </div>
 </x-guest-layout>

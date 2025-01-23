@@ -9,9 +9,13 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DashboardController;
 
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('auth.login');
+})->name('login');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
