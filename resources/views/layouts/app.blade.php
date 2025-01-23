@@ -44,7 +44,7 @@
         <!-- Footer -->
         <footer class="bg-white text-gray-800 py-4">
             <div class="max-w-7xl mx-auto px-4 text-center">
-                <p>&copy; {{ date('Y') }} {{ config('app.name', 'Laravel') }}. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} {{ config('app.name', 'Shopclip') }}. All rights reserved.</p>
                 <p>
                     <a href="https://www.example.com" class="text-indigo-400 hover:text-indigo-600">Privacy Policy</a> |
                     <a href="https://www.example.com" class="text-indigo-400 hover:text-indigo-600">Terms of Service</a>
