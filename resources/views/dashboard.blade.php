@@ -1,8 +1,4 @@
 <x-app-layout>
-
-    <style>
-       
-    </style>
     <x-slot name="header" class="bg-gray-100">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Dashboard') }}
@@ -10,7 +6,7 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4"> <!-- Added px-4 for small screens -->
             <!-- First Row: Three Cards -->
             <div class="grid grid-cols-12 gap-6 mb-6">
 
@@ -44,92 +40,49 @@
             <div class="grid grid-cols-12 gap-6 mb-6">
 
                 <!-- Chart Card (8/12) -->
-                <div class="col-span-12 sm:col-span-8 bg-white shadow-md rounded-md p-4">
+                <div class="col-span-12 sm:col-span-8 bg-white shadow-md rounded-md p-4 ">
                     <h3 class="font-semibold text-lg text-gray-700 mb-4">
                         <i class="fa fa-chart-line text-blue-500 mr-2"></i> Sales Overview (7 Days)
                     </h3>
                     <!-- Chart Here (You can use a chart library like ApexCharts or Chart.js) -->
                     <!-- Placeholder for Chart -->
-                    <div id="chart"></div>
+                    <div id="chart"></div>        
                 </div>
 
                 <!-- List Card (4/12) -->
                 <div class="col-span-12 sm:col-span-4 bg-white shadow-md rounded-md p-4">
-    <h3 class="font-semibold text-lg text-gray-700 mb-4">
-        <i class="fa fa-boxes text-gray-600 mr-2"></i> Top-Selling Products
-    </h3>
-    <ul class="space-y-4">
-        @foreach ($topProducts as $product)
-            <li class="flex items-center bg-gray-100 p-3 rounded-md">
-                <!-- Product Name -->
-                <h4 class="font-semibold text-gray-800 flex-shrink-0 w-1/3">
-                    {{ $product->product->name }}
-                </h4>
-                <!-- Product Details -->
-                <div class="ml-4 flex-1 text-sm text-gray-600">
-                    <p>Quantity Sold: {{ $product->total_quantity }}</p>
-                    <p>Revenue: ${{ number_format($product->total_revenue, 2) }}</p>
+                    <h3 class="font-semibold text-lg text-gray-700 mb-4">
+                        <i class="fa fa-boxes text-gray-600 mr-2"></i> Top-Selling Products
+                    </h3>
+                    <ul class="space-y-4">
+                        @foreach ($topProducts as $product)
+                            <li class="flex items-center bg-gray-100 p-3 rounded-md">
+                                <!-- Product Name -->
+                                <h4 class="font-semibold text-gray-800 flex-shrink-0 w-1/3">
+                                    {{ $product->product->name }}
+                                </h4>
+                                <!-- Product Details -->
+                                <div class="ml-4 flex-1 text-sm text-gray-600">
+                                    <p>Quantity Sold: {{ $product->total_quantity }}</p>
+                                    <p>Revenue: ${{ number_format($product->total_revenue, 2) }}</p>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
-            </li>
-        @endforeach
-    </ul>
-</div>
-
 
             </div>
 
             <!-- Third Row: Product Stock Table -->
-            <div class="col-span-12 bg-white shadow-md rounded-md p-4">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-semibold text-lg text-gray-700">
-                        <i class="fa fa-warehouse text-gray-600 mr-2"></i> Product Stock Levels
-                    </h3>
-                    <a href="{{ route('products.index') }}" class="text-blue-600 hover:underline">View All</a>
-                </div>
-                <table class="table-auto w-full text-left border-collapse border border-gray-200">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-4 py-2 border border-gray-200">Product</th>
-                            <th class="px-4 py-2 border border-gray-200">Stock Level</th>
-                            <th class="px-4 py-2 border border-gray-200">Price</th>
-                            <th class="px-4 py-2 border border-gray-200">Stock Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($products as $product)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-2 border border-gray-200">{{ $product->name }}</td>
-                            <td class="px-4 py-2 border border-gray-200">{{ $product->stock }}</td>
-                            <td class="px-4 py-2 border border-gray-200">${{ number_format($product->price, 2) }}</td>
-                            <td class="px-4 py-2 border border-gray-200">
-                                @if($product->stock > 10)
-                                <span class="text-green-500">In Stock</span>
-                                @elseif($product->stock > 0)
-                                <span class="text-yellow-500">Low Stock</span>
-                                @else
-                                <span class="text-red-500">Out of Stock</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
+            
         </div>
     </div>
-
-
-
-   <script>
+<script>
     document.addEventListener("DOMContentLoaded", function() {
         const chartOptions = {
             series: [{
                 name: "Sales",
                 data: @json($chartData['sales'])
-            }, {
-                name: "Stock Worth After Sales",
-                data: @json($chartData['stockWorth'])
             }],
             chart: {
                 height: 350,
@@ -146,7 +99,7 @@
                     show: false
                 }
             },
-            colors: ['#77B6EA', '#FF6347'], // Blue for Sales, Red for Stock Worth
+            colors: ['#77B6EA'], // Blue for Sales
             dataLabels: {
                 enabled: true
             },
@@ -154,7 +107,7 @@
                 curve: 'smooth'
             },
             title: {
-                text: 'Sales and Stock Worth Trend (Last 7 Days)',
+                text: 'Sales Trend (Last 7 Days)',
                 align: 'left'
             },
             grid: {
@@ -178,12 +131,6 @@
                     text: 'Total Sales'
                 },
                 min: 0
-            }, {
-                opposite: true,
-                title: {
-                    text: 'Stock Worth After Sales'
-                },
-                min: 0
             }],
             legend: {
                 position: 'top',
@@ -191,13 +138,55 @@
                 floating: true,
                 offsetY: -25,
                 offsetX: -5
-            }
+            },
+            responsive: [{
+                breakpoint: 1200,
+                options: {
+                    chart: {
+                        height: 300
+                    },
+                    title: {
+                        align: 'center'
+                    },
+                    xaxis: {
+                        labels: {
+                            rotate: -45
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        horizontalAlign: 'center'
+                    }
+                }
+            }, {
+                breakpoint: 768,
+                options: {
+                    chart: {
+                        height: 250,
+                        type: 'bar'
+                    },
+                    title: {
+                        text: 'Sales Trend (Last 7 Days)',
+                        align: 'center'
+                    },
+                    xaxis: {
+                        labels: {
+                            rotate: -90
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        horizontalAlign: 'center'
+                    }
+                }
+            }]
         };
 
         const chart = new ApexCharts(document.querySelector("#chart"), chartOptions);
         chart.render();
     });
 </script>
+
 
 
 </x-app-layout>
