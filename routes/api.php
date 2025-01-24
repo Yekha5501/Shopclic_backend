@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sales/daily-summary', [TransactionController::class, 'dailySalesSummary']);
     Route::post('/broadcast', [ProductController::class, 'broadcastMessage']);
     Route::get('/products', [ProductController::class, 'index']);
+    Route::post('/transactions/revert', [TransactionController::class, 'revertTransaction']);
 });
 
 

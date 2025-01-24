@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Events\ProductUpdated;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
@@ -131,4 +132,48 @@ public function store(Request $request)
         'total_products_sold' => $totalProductsSold
     ], 200);
 }
+
+public function revertTransaction(Request $request)
+{
+    $transactionId = $request->input('transaction_id');
+    $userId = auth()->id(); // Get the authenticated user's ID
+
+    // Fetch the transaction with its items, ensuring it belongs to the authenticated user
+    $transaction = Transaction::with('transactionItems.product')
+        ->where('id', $transactionId)
+        ->where('user_id', $userId) // Ensure the transaction belongs to the authenticated user
+        ->first();
+
+    if (!$transaction) {
+        return response()->json(['error' => 'Transaction not found or does not belong to the authenticated user'], 404);
+    }
+
+    DB::beginTransaction();
+
+    try {
+        // Restock the products
+        foreach ($transaction->transactionItems as $item) {
+            $product = $item->product;
+
+            if ($product) {
+                $product->stock += $item->quantity;
+                $product->save();
+            }
+        }
+
+        // Delete the transaction items
+        $transaction->transactionItems()->delete();
+
+        // Delete the transaction itself
+        $transaction->delete();
+
+        DB::commit();
+
+        return response()->json(['message' => 'Transaction successfully reverted'], 200);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['error' => 'Failed to revert transaction: ' . $e->getMessage()], 500);
+    }
+}
+
 }
