@@ -132,7 +132,6 @@ public function store(Request $request)
         'total_products_sold' => $totalProductsSold
     ], 200);
 }
-
 public function revertTransaction(Request $request)
 {
     $transactionId = $request->input('transaction_id');
@@ -141,7 +140,7 @@ public function revertTransaction(Request $request)
     // Fetch the transaction with its items, ensuring it belongs to the authenticated user
     $transaction = Transaction::with('transactionItems.product')
         ->where('id', $transactionId)
-        ->where('user_id', $userId) // Ensure the transaction belongs to the authenticated user
+        ->where('user_id', $userId)
         ->first();
 
     if (!$transaction) {
@@ -151,6 +150,8 @@ public function revertTransaction(Request $request)
     DB::beginTransaction();
 
     try {
+        $revertedItems = []; // To log the reverted items
+
         // Restock the products
         foreach ($transaction->transactionItems as $item) {
             $product = $item->product;
@@ -158,8 +159,24 @@ public function revertTransaction(Request $request)
             if ($product) {
                 $product->stock += $item->quantity;
                 $product->save();
+
+                // Log the reverted item details
+                $revertedItems[] = [
+                    'product_id' => $product->id,
+                    'product_name' => $product->name,
+                    'quantity' => $item->quantity,
+                ];
             }
         }
+
+        // Log the reverted transaction
+        DB::table('reverted_transactions')->insert([
+            'user_id' => $userId,
+            'transaction_id' => $transactionId,
+            'transaction_items' => json_encode($revertedItems),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         // Delete the transaction items
         $transaction->transactionItems()->delete();
@@ -169,11 +186,19 @@ public function revertTransaction(Request $request)
 
         DB::commit();
 
-        return response()->json(['message' => 'Transaction successfully reverted'], 200);
+        return response()->json([
+            'message' => 'Transaction successfully reverted',
+            'reverted_transaction' => [
+                'transaction_id' => $transactionId,
+                'user_id' => $userId,
+                'reverted_items' => $revertedItems,
+            ],
+        ], 200);
     } catch (\Exception $e) {
         DB::rollBack();
         return response()->json(['error' => 'Failed to revert transaction: ' . $e->getMessage()], 500);
     }
 }
+
 
 }
