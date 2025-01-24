@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
 use App\Models\Product;
+use App\Models\RevertedTransaction;
 
 class ReportController extends Controller
 {
@@ -33,14 +34,19 @@ public function index()
         ->orderByDesc('date')
         ->paginate(10);
 
-    // Format date to ensure proper routing
     $transactionsByDateFormatted = $transactionsByDate->map(function ($transaction) {
-        $transaction->date = Carbon::parse($transaction->date)->format('Y-m-d'); // Ensure the format is 'Y-m-d'
+        $transaction->date = Carbon::parse($transaction->date)->format('Y-m-d');
         return $transaction;
     });
 
-    return view('reports.index', compact('topProducts', 'transactionsByDateFormatted'));
+    // Fetch Reverted Transactions
+    $revertedTransactions = RevertedTransaction::with(['user', 'transaction'])
+        ->where('user_id', $userId)
+        ->get();
+
+    return view('reports.index', compact('topProducts', 'transactionsByDateFormatted', 'revertedTransactions'));
 }
+
 
 // Detailed Transactions for a Date
 public function transactionsByDate($date)
