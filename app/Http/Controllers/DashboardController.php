@@ -14,25 +14,27 @@ use Illuminate\Support\Facades\DB;
 class DashboardController extends Controller
 {
 
+
 public function index()
 {
     $userId = Auth::id();
 
-    // Total Stock Worth
-    $totalStockWorth = Product::sum(DB::raw('price * stock'));
+    // Total Stock Worth (only for products belonging to the authenticated user)
+    $totalStockWorth = Product::where('user_id', $userId)
+        ->sum(DB::raw('price * stock'));
 
-    // Revenue for the day
+    // Revenue for the day (for transactions belonging to the authenticated user)
     $today = Carbon::today();
     $revenueToday = Transaction::where('user_id', $userId)
         ->whereDate('created_at', $today)
         ->sum('total_amount');
 
-    // Total Transactions for Today
+    // Total Transactions for Today (filtered by user)
     $totalTransactionsToday = Transaction::where('user_id', $userId)
         ->whereDate('created_at', $today)
         ->count();
 
-    // Top-Selling Products
+    // Top-Selling Products (filtered by user's transactions)
     $topProducts = TransactionItem::select(
         'product_id',
         DB::raw('SUM(quantity) as total_quantity'),
@@ -43,13 +45,15 @@ public function index()
         ->groupBy('product_id')
         ->orderBy('total_quantity', 'desc')
         ->take(5)
-        ->with('product:id,name,price')
+        ->with('product:id,name,price') // Load product details
         ->get();
 
-    // Product Stock Levels
-    $products = Product::take(5)->get();
+    // Product Stock Levels (filtered by user and limited to 5 products)
+    $products = Product::where('user_id', $userId)
+        ->take(5)
+        ->get();
 
-    // Sales Trend for Last 7 Days
+    // Sales Trend for Last 7 Days (filtered by user's transactions)
     $salesTrends = Transaction::select(
         DB::raw('DATE(created_at) as date'),
         DB::raw('SUM(total_amount) as total_sales')
@@ -60,14 +64,14 @@ public function index()
         ->orderBy('date')
         ->get();
 
-    // Calculate stock worth for each day after sales
+    // Calculate stock worth trends
     $stockWorthTrends = collect();
-    $previousStockData = Product::pluck('stock', 'id'); // Get the initial stock levels
+    $previousStockData = Product::where('user_id', $userId)->pluck('stock', 'id'); // Filter by user
 
     foreach ($salesTrends as $salesTrend) {
         $date = $salesTrend->date;
 
-        // Get sales transactions for the specific day
+        // Get sales transactions for the specific day (filtered by user)
         $sales = TransactionItem::select(
             'product_id',
             DB::raw('SUM(quantity) as total_quantity')
@@ -84,16 +88,21 @@ public function index()
             $productId = $sale->product_id;
             $quantitySold = $sale->total_quantity;
 
-            // Get the price and stock for this product
-            $product = Product::find($productId);
-            $initialStock = $previousStockData[$productId];
-            $remainingStock = $initialStock - $quantitySold;
+            // Get the price and stock for this product (filtered by user)
+            $product = Product::where('id', $productId)
+                ->where('user_id', $userId)
+                ->first();
 
-            // Calculate stock worth for the day
-            $dailyStockWorth += $product->price * $remainingStock;
+            if ($product) {
+                $initialStock = $previousStockData[$productId];
+                $remainingStock = $initialStock - $quantitySold;
 
-            // Update the stock for the next day
-            $previousStockData[$productId] = $remainingStock;
+                // Calculate stock worth for the day
+                $dailyStockWorth += $product->price * $remainingStock;
+
+                // Update the stock for the next day
+                $previousStockData[$productId] = $remainingStock;
+            }
         }
 
         $stockWorthTrends->push([
@@ -118,6 +127,5 @@ public function index()
         'chartData'
     ));
 }
-
 
 }

@@ -1,23 +1,29 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller; // Import the base Controller
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
-    use App\Events\MessageBroadcasted;
+use App\Events\MessageBroadcasted;
 
 class ProductController extends Controller
 {
     // Fetch all products
+
+
     public function index()
     {
-        return Product::all();
+        // Get products for the authenticated user
+        return Product::where('user_id', Auth::id())->get();
     }
 
 
-   public function broadcastMessage(Request $request)
+
+    public function broadcastMessage(Request $request)
     {
         // Validate the incoming message request
         $request->validate([
@@ -50,7 +56,6 @@ class ProductController extends Controller
             ], 500);
         }
     }
-
 }
 
 // then((res) => {

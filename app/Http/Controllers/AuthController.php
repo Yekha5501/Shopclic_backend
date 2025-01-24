@@ -49,7 +49,7 @@ public function login(Request $request)
 
 public function logout(Request $request)
 {
-   
+    $request->user()->update(['is_online' => false]);
     $request->user()->tokens()->delete();
 
     return response()->json(['message' => 'Logged out']);

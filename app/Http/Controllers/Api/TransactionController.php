@@ -106,24 +106,29 @@ public function store(Request $request)
 
 
 
-    public function dailySalesSummary(Request $request)
-    {
-        // Get today's date
-        $today = Carbon::today();
+   public function dailySalesSummary(Request $request)
+{
+    // Get today's date
+    $today = Carbon::today();
 
-        // Calculate the total revenue for today
-        $totalRevenue = Transaction::whereDate('created_at', $today)
-            ->sum('total_amount');
+    // Get the authenticated user's ID
+    $userId = Auth::id();
 
-        // Calculate the total products sold today
-        $totalProductsSold = TransactionItem::whereHas('transaction', function ($query) use ($today) {
-            $query->whereDate('created_at', $today);
+    // Calculate the total revenue for today for the authenticated user
+    $totalRevenue = Transaction::whereDate('created_at', $today)
+        ->where('user_id', $userId) // Filter by user ID
+        ->sum('total_amount');
+
+    // Calculate the total products sold today for the authenticated user
+    $totalProductsSold = TransactionItem::whereHas('transaction', function ($query) use ($today, $userId) {
+            $query->whereDate('created_at', $today)
+                  ->where('user_id', $userId); // Filter by user ID
         })
-            ->sum('quantity');
+        ->sum('quantity');
 
-        return response()->json([
-            'total_revenue' => $totalRevenue,
-            'total_products_sold' => $totalProductsSold
-        ], 200);
-    }
+    return response()->json([
+        'total_revenue' => $totalRevenue,
+        'total_products_sold' => $totalProductsSold
+    ], 200);
+}
 }
