@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-6">
-         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4"> 
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4"> 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <!-- Success Message -->
@@ -28,13 +28,36 @@
                         </a>
                     </div>
 
+                    <!-- Search Input -->
+                    <div class="mb-4">
+                        <form action="{{ route('products.index') }}" method="GET">
+                            <input
+                                type="text"
+                                name="search"
+                                id="searchProducts"
+                                placeholder="Search products..."
+                                value="{{ request('search') }}"
+                                class="w-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button type="submit" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            <!-- Clear Search Button -->
+                            @if (request('search'))
+                                <a href="{{ route('products.index') }}" class="ml-2 text-sm text-gray-600 hover:text-gray-800">
+                                    <i class="fa fa-times"></i> Clear Search
+                                </a>
+                            @endif
+                        </form>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="table-auto w-full text-left border-collapse border border-gray-200">
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="px-4 py-2 border border-gray-200">ID</th>
                                     <th class="px-4 py-2 border border-gray-200">Name</th>
-                                    <th class="px-4 py-2 border border-gray-200">Price ($)</th>
+                                    <th class="px-4 py-2 border border-gray-200">Price (K)</th>
                                     <th class="px-4 py-2 border border-gray-200">Stock</th>
                                     <th class="px-4 py-2 border border-gray-200">Actions</th>
                                 </tr>
@@ -51,7 +74,6 @@
                                                 <span class="text-red-500 text-sm">(Out of Stock)</span>
                                             @endif
                                         </td>
-
                                         <td class="px-4 py-2 border border-gray-200 flex gap-2">
                                             <!-- Edit Button -->
                                             <a href="{{ route('products.edit', $product->id) }}" class="text-blue-500 hover:text-blue-700">
@@ -77,8 +99,9 @@
                             </tbody>
                         </table>
 
+                        <!-- Pagination Links with Search Parameter -->
                         <div class="mt-4">
-                            {{ $products->links() }}
+                            {{ $products->appends(['search' => request('search')])->links() }}
                         </div>
                     </div>
                 </div>

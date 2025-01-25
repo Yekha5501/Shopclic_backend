@@ -10,11 +10,22 @@ use Illuminate\Support\Facades\Auth;
 class ProductController extends Controller
 {
     // Show the form to add a new product
-    public function index()
-    {
-        $products = Product::where('user_id', Auth::id())->paginate(6); // Only show products for the authenticated user
-        return view('products.index', compact('products'));
-    }
+  public function index(Request $request)
+{
+    $userId = Auth::id(); // Authenticated user ID
+
+    // Get the search term from the request
+    $search = $request->query('search');
+
+    // Fetch Products with Search Filter
+    $products = Product::where('user_id', $userId)
+        ->when($search, function ($query, $search) {
+            return $query->where('name', 'like', "%{$search}%");
+        })
+        ->paginate(5); // Adjust the number of items per page as needed
+
+    return view('products.index', compact('products'));
+}
 
     public function create()
     {

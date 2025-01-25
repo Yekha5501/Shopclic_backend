@@ -13,9 +13,9 @@
                 <!-- Card 1: Total Stock Worth -->
                 <div class="col-span-12 sm:col-span-4 bg-white shadow-md rounded-md p-4">
                     <h3 class="font-semibold text-lg text-gray-700 mb-4">
-                        <i class="fa fa-cogs text-blue-500 mr-2"></i> Total Stock Worth
+                        <i class="fa fa-cogs text-green-500 mr-2"></i> Total Stock Worth
                     </h3>
-                    <p class="text-2xl font-bold text-gray-800">${{ number_format($totalStockWorth, 2) }}</p>
+                    <p class="text-2xl font-bold text-gray-800">K{{ number_format($totalStockWorth, 2) }}</p>
                 </div>
 
                 <!-- Card 2: Revenue of the Day -->
@@ -23,7 +23,7 @@
                     <h3 class="font-semibold text-lg text-gray-700 mb-4">
                         <i class="fa fa-dollar-sign text-green-500 mr-2"></i> Revenue Today
                     </h3>
-                    <p class="text-2xl font-bold text-gray-800">${{ number_format($revenueToday, 2) }}</p>
+                    <p class="text-2xl font-bold text-gray-800">K{{ number_format($revenueToday, 2) }}</p>
                 </div>
 
                 <!-- Card 3: Total Transactions for Today -->
@@ -42,7 +42,7 @@
                 <!-- Chart Card (8/12) -->
                 <div class="col-span-12 sm:col-span-8 bg-white shadow-md rounded-md p-4 ">
                     <h3 class="font-semibold text-lg text-gray-700 mb-4">
-                        <i class="fa fa-chart-line text-blue-500 mr-2"></i> Sales Overview (7 Days)
+                        <i class="fa fa-chart-line text-green-500 mr-2"></i> Sales Overview (7 Days)
                     </h3>
                     <!-- Chart Here (You can use a chart library like ApexCharts or Chart.js) -->
                     <!-- Placeholder for Chart -->
@@ -52,7 +52,7 @@
                 <!-- List Card (4/12) -->
                 <div class="col-span-12 sm:col-span-4 bg-white shadow-md rounded-md p-4">
                     <h3 class="font-semibold text-lg text-gray-700 mb-4">
-                        <i class="fa fa-boxes text-gray-600 mr-2"></i> Top-Selling Products
+                        <i class="fa fa-boxes text-yellow-500 mr-2"></i> Top-Selling Products
                     </h3>
                     <ul class="space-y-4">
                         @foreach ($topProducts as $product)
@@ -64,7 +64,7 @@
                                 <!-- Product Details -->
                                 <div class="ml-4 flex-1 text-sm text-gray-600">
                                     <p>Quantity Sold: {{ $product->total_quantity }}</p>
-                                    <p>Revenue: ${{ number_format($product->total_revenue, 2) }}</p>
+                                    <p>Revenue: K{{ number_format($product->total_revenue, 2) }}</p>
                                 </div>
                             </li>
                         @endforeach
@@ -99,7 +99,7 @@
                     show: false
                 }
             },
-            colors: ['#77B6EA'], // Blue for Sales
+            colors: ['#22c55e'], // Blue for Sales
             dataLabels: {
                 enabled: true
             },

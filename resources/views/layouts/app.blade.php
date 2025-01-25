@@ -8,23 +8,22 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-   
-  
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <!-- Add Font Awesome CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-     <script src="https://cdn.tailwindcss.com"></script>
-     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.0/dist/cdn.min.js" defer></script>
-     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.0/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div class="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
+        <!-- Navigation -->
         @include('layouts.navigation')
 
         <!-- Page Heading -->
@@ -37,17 +36,17 @@
         @endisset
 
         <!-- Page Content -->
-        <main>
+        <main class="flex-grow">
             {{ $slot }}
         </main>
 
         <!-- Footer -->
         <footer class="bg-white text-gray-800 py-4">
             <div class="max-w-7xl mx-auto px-4 text-center">
-                <p>&copy; {{ date('Y') }} {{ config('app.name', 'Shopclip') }}. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} {{ config('app.name', 'Shopklip') }}. All rights reserved.</p>
                 <p>
-                    <a href="https://www.example.com" class="text-indigo-400 hover:text-indigo-600">Privacy Policy</a> |
-                    <a href="https://www.example.com" class="text-indigo-400 hover:text-indigo-600">Terms of Service</a>
+                    <a href="#" class="text-green-400 hover:text-green-600">Privacy Policy</a> |
+                    <a href="#" class="text-green-400 hover:text-green-600">Terms of Service</a>
                 </p>
             </div>
         </footer>

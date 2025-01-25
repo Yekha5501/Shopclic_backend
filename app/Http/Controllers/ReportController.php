@@ -12,55 +12,91 @@ use App\Models\RevertedTransaction;
 
 class ReportController extends Controller
 {
-   
-public function index()
+  public function index(Request $request)
 {
     $userId = Auth::id(); // Authenticated user ID
 
-    // Top Selling Products
-    $topProducts = TransactionItem::select('product_id', Product::raw('SUM(quantity) as total_quantity'), Product::raw('SUM(subtotal) as total_revenue'))
-        ->join('transactions', 'transaction_items.transaction_id', '=', 'transactions.id')
-        ->where('transactions.user_id', $userId)
-        ->groupBy('product_id')
-        ->orderBy('total_quantity', 'desc')
-        ->take(5)
-        ->with('product:id,name,price')
+    // Products Out of Stock
+    $outOfStockProducts = Product::where('user_id', $userId)
+        ->where('stock', '<=', 0) // Products with stock <= 0
+        ->orderBy('stock', 'asc') // Prioritize products with the lowest stock
+        ->take(5) // Limit to 5 products
         ->get();
+
+    // Products Close to Finishing (e.g., stock <= 5)
+    $lowStockProducts = Product::where('user_id', $userId)
+        ->where('stock', '>', 0) // Products with stock > 0
+        ->where('stock', '<=', 5) // Products with stock <= 5
+        ->orderBy('stock', 'asc') // Prioritize products with the lowest stock
+        ->take(5) // Limit to 5 products
+        ->get();
+
+    // Date search for Transactions Table
+    $transactionDate = $request->query('transaction_date');
 
     // Transactions Grouped by Date
     $transactionsByDate = Transaction::where('user_id', $userId)
+        ->when($transactionDate, function ($query, $transactionDate) {
+            return $query->whereDate('created_at', $transactionDate);
+        })
         ->selectRaw('DATE(created_at) as date, SUM(total_amount) as revenue')
         ->groupBy('date')
         ->orderByDesc('date')
-        ->paginate(10);
+        ->paginate(2);
 
     $transactionsByDateFormatted = $transactionsByDate->map(function ($transaction) {
         $transaction->date = Carbon::parse($transaction->date)->format('Y-m-d');
         return $transaction;
     });
 
-    // Fetch Reverted Transactions
+    // Search term for Reverted Transactions Table
+    $revertedTransactionSearch = $request->query('reverted_transaction_search');
+
+    // Fetch Reverted Transactions (Paginated)
     $revertedTransactions = RevertedTransaction::with(['user', 'transaction'])
         ->where('user_id', $userId)
-        ->get();
+        ->when($revertedTransactionSearch, function ($query, $revertedTransactionSearch) {
+            return $query->where('id', 'like', "%{$revertedTransactionSearch}%")
+                         ->orWhere('transaction_id', 'like', "%{$revertedTransactionSearch}%")
+                         ->orWhereHas('user', function ($q) use ($revertedTransactionSearch) {
+                             $q->where('name', 'like', "%{$revertedTransactionSearch}%");
+                         });
+        })
+        ->paginate(2); // Paginate with 10 items per page
 
-    return view('reports.index', compact('topProducts', 'transactionsByDateFormatted', 'revertedTransactions'));
+    return view('reports.index', compact(
+        'outOfStockProducts',
+        'lowStockProducts',
+        'transactionsByDate',
+        'transactionsByDateFormatted',
+        'revertedTransactions',
+        'transactionDate',
+        'revertedTransactionSearch'
+    ));
 }
-
-
 // Detailed Transactions for a Date
-public function transactionsByDate($date)
+public function transactionsByDate(Request $request, $date)
 {
     $userId = Auth::id();
     // Ensure the $date format is valid
     $formattedDate = Carbon::parse($date)->format('Y-m-d');
 
+    // Get the search term from the request
+    $search = $request->query('search');
+
+    // Fetch Transactions with Search Filter
     $transactions = Transaction::where('user_id', $userId)
         ->whereDate('created_at', $formattedDate)
+        ->when($search, function ($query, $search) {
+            return $query->where('id', 'like', "%{$search}%")
+                         ->orWhereHas('transactionItems.product', function ($q) use ($search) {
+                             $q->where('name', 'like', "%{$search}%");
+                         });
+        })
         ->with('transactionItems.product')
-        ->get();
+        ->paginate(3);
 
-    return view('reports.transactions', compact('transactions', 'formattedDate'));
+    return view('reports.transactions', compact('transactions', 'formattedDate', 'search'));
 }
 
 // Detailed Transactions for a Date
