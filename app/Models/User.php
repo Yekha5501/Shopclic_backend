@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -46,4 +47,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // app/Models/User.php
+public function isAdmin()
+{
+    return $this->role === 'admin'; // Check if the user is an admin
+}
+
+ public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
 }

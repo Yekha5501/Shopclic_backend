@@ -8,6 +8,9 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\AdminLoginController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RegisterController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -20,6 +23,27 @@ Route::get('/', function () {
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+
+
+// Admin routes (only accessible by admins)
+
+Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login.submit');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::post('/admin/reg', [AdminController::class, 'store'])->name('reg.store');
+
+
+Route::get('/admin/reg', [AdminController::class, 'index'])->name('admin.reg');
+
+
+
+});
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
