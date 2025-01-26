@@ -22,7 +22,7 @@
 <div class="min-h-screen flex items-center justify-center border-4 border-green-500">
     <div class="login-card max-w-md w-full mx-auto p-8 bg-white rounded-lg shadow-lg">
         <!-- Logo Section -->
-        <div class="text-2xl font-bold text-center">{{ __('ShopKlip') }}</div>
+        <div class="text-2xl font-bold text-center">{{ __('ShopClip') }}</div>
 
         <div class="flex justify-center mt-4 mb-4">
     <img src="{{ asset('images/icon.png') }}" alt="Logo" class="h-24 w-24">
