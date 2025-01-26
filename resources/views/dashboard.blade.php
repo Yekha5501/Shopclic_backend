@@ -1,9 +1,23 @@
 <x-app-layout>
-    <x-slot name="header" class="bg-green-100">
+   <x-slot name="header" class="bg-green-100">
+    <div class="flex justify-between items-center">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Dashboard') }}
         </h2>
-    </x-slot>
+        <!-- Download Button -->
+        <a 
+            href="https://drive.google.com/file/d/1egrClc3GjG9ZvFWhLbiMYZb5RnewOQaf/view?usp=sharing" 
+            target="_blank" 
+            class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold text-sm rounded-lg shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Download APK
+        </a>
+    </div>
+</x-slot>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4"> <!-- Added px-4 for small screens -->
