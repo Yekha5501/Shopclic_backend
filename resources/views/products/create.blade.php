@@ -6,13 +6,30 @@
     </x-slot>
 
     <div class="py-6">
-         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4"> 
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 px-4"> 
+
             <!-- Success Message -->
             @if (session('success'))
-                <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+                <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-md flex items-center">
                     <i class="fa fa-check-circle mr-2"></i>{{ session('success') }}
                 </div>
             @endif
+
+            <!-- Bulk Import Note -->
+            <div class="mb-6 bg-blue-50 border border-blue-200 rounded-lg shadow p-6">
+                <h3 class="text-lg font-bold text-blue-700 flex items-center mb-4">
+                    <i class="fa fa-upload text-blue-500 mr-2"></i> Bulk Import Available
+                </h3>
+                <p class="text-gray-700">
+                    Save time by importing products in bulk using our Excel import feature. 
+                    Visit the <a href="{{ route('import.excel.form') }}" class="text-blue-600 font-semibold underline">
+                    Import Products</a> page to upload your file.
+                </p>
+                <p class="text-gray-700 mt-2">
+                    Ensure your file matches the required format with columns for <strong>name</strong>, 
+                    <strong>price</strong>, and <strong>stock</strong>. This feature is ideal for managing large product inventories.
+                </p>
+            </div>
 
             <!-- Create Product Form -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -63,7 +80,7 @@
                             <!-- Submit Button -->
                             <div>
                                 <button type="submit" 
-                                    class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
+                                    class="w-full bg-green-500 text-white py-3 px-6 rounded-lg shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
                                     <i class="fa fa-save mr-2"></i> Save Product
                                 </button>
                             </div>

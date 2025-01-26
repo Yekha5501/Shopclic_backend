@@ -24,7 +24,7 @@
 
                         <!-- Import Products Button -->
                         <a href="{{ route('import.excel.form') }}" class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 focus:ring focus:ring-green-300">
-                            <i class="fa fa-upload mr-2"></i> Import Products
+                            <i class="fa fa-upload mr-2"></i> Import Products in Excel
                         </a>
                     </div>
 
